@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "Tab Usage Analyzer",
+  "description": "analyze how you use tabs in your browser and present the data in a beautiful way",
+  "version": "0.1",
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html",
+    "default_title": "Tab Usage Analyzer"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "background",
+    "browsingData"
+  ]
+}
