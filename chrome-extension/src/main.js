@@ -1,4 +1,4 @@
-
+"use strict";
 
 function getNumberOfTabs(callback) {
   // Query filter to be passed to chrome.tabs.query - see
