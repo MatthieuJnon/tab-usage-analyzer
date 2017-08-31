@@ -4,7 +4,9 @@
   "name": "Tab Usage Analyzer",
   "description": "analyze how you use tabs in your browser and present the data in a beautiful way",
   "version": "0.1",
-
+  "background": {
+    "scripts":["lib/background.js"]
+  },
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html",
@@ -12,6 +14,7 @@
   },
   "permissions": [
     "activeTab",
+    "storage",
     "tabs",
     "background",
     "browsingData"
