@@ -15,25 +15,60 @@ function getUniqueKey() {
 	return 1;
 }
 
-function tabLife(tabId) {
-	this.d = new Date();
+function Domain(domain) {
+	var _this = this;
 
-	Object.defineProperty(this, 'openTIme', {
-		value: this.d.getTime(),
+	this.domain = domain;
+	this.openTime = d.getTime();
+
+	this.defineProperty(this, "openTime", {
+		get: function get() {
+			return openTime;
+		},
+		enumerable: false,
+		configurable: false });
+
+	this.defineProperty(this, "closedTime", { set: function set(newVal) {
+			return _this._closedTime_ = newVal;
+		},
+		get: function get() {
+			return closedTime;
+		},
+		enumerable: false,
+		configurable: false });
+}
+
+function tabLife(tabId) {
+	var _this2 = this;
+
+	this.domainsVisited = [];
+	this.closedTime = 0;
+	this.id = tabId;
+
+	Object.defineProperty(this, 'openTime', {
+		value: d.getTime(),
 		writable: false,
 		configurable: true,
 		enumerable: false
 	});
-	Object.defineProperty(this, 'id', {
-		value: tabId,
+
+	Object.defineProperty(this, "id", {
+		get: function get() {
+			return _this2._id;
+		},
+		set: function set(newVal) {
+			_this2._id = newVal;
+		}
+	});
+	this.id = tabId;
+
+	// create a unique tab id and move all of this in a function
+	this.refId = 1;
+	Object.defineProperty(this, 'refId', {
 		writable: false,
 		configurable: true,
 		enumerable: true
 	});
-
-	this.setclosedTime = function () {
-		this.closedTime = this.d.getTime();
-	};
 
 	this.send = function () {
 		var response = {
@@ -42,46 +77,77 @@ function tabLife(tabId) {
 
 		return response;
 	};
-}
 
-function newDomainList() {
-
-	var API = {};
-
-	return API;
+	this.change = function () {
+		if (_this2.domainsVisited.length === 0) {
+			var _domain = getDomainFromURL();
+			_this2.domainsVisited.push(new Domain(_domain));
+		}
+	};
 }
 
 /* 
 Create the extension unique key and stores it
 */
-function createUniqueKey() {
+function getAUniqueKey() {
 	var key = 1;
 	chrome.storage.sync.set({ 'key': key }, function () {});
 }
 
+function getDomainFromURL(url) {
+
+	return domain;
+}
+
 // Store all the tabs currently opened
 var tabArray = [];
+var d = new Date();
 
 /*
 Create an instance of the TabLife object
 */
 function storeTab(tab) {
 	var tabId = tab.id;
-	tabArray.push(new tabLife(tabId));
 	console.log(tabId);
+	tabArray.push(new tabLife(tabId));
+	console.log(tabArray);
 }
 
 function endTabLife(tabId) {
-	console.log(tabId);
-	console.log(tabArray);
 	var tab = tabArray.find(function (item) {
 		return item.id == tabId;
 	});
-	tab.setclosedTime();
+	var tabIndex = tabArray.findIndex(function (item) {
+		return item.id == tabId;
+	});
+	tab.closedTime = d.getTime();
 	var response = tab.send();
 
 	if (response.status == 'error') {
 		console.log('the closed tab was not succesfully sent to mortrevere');
+	} else if (response.status == 'sucess') {
+		console.log('what do you know ? It worked !!');
+	}
+
+	tabArray.splice(tabIndex, 1);
+	console.log('has been spliced, examining : ');
+	console.log(tabArray);
+}
+
+/* This event is fired when a tab is updated
+/  For instance when a preloaded tab replace an existant tab
+/  This way we can keep the proper reference for this tab
+*/
+function updateTabId(tabDetails) {
+	console.log('updating tab');
+	console.log(tabDetails);
+	var tab = tabArray.find(function (item) {
+		return item.id == tabDetails.replacedTabId;
+	});
+	if (tab !== undefined) {
+		tab.id = tabDetails.tabId;
+	} else {
+		console.log('a tab was updated and no corresponding original tab was found');
 	}
 }
 
@@ -93,3 +159,4 @@ if (uniqueKey === 0) {
 
 chrome.tabs.onCreated.addListener(storeTab);
 chrome.tabs.onRemoved.addListener(endTabLife);
+chrome.webNavigation.onTabReplaced.addListener(updateTabId);

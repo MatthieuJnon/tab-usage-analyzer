@@ -14,9 +14,10 @@
   },
   "permissions": [
     "activeTab",
+    "webNavigation",
     "storage",
     "tabs",
     "background",
     "browsingData"
-  ]
+  ] 
 }
