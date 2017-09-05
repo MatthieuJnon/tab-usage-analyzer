@@ -1,4 +1,4 @@
-
+'use strict';
 
 /* 
 Get the unique extension key,
@@ -14,32 +14,34 @@ function getUniqueKey(){
 	return 1;
 }
 
-function newTabLife(){
+function tabLife(tabId){
+	this.d = new Date();
 
-	let openTime;
-	let closedTime;
-	let domainList = newDomainList;
-	let d = new Date();
+	Object.defineProperty(this,'openTIme', {
+		value: this.d.getTime(),
+		writable: false,
+		configurable: true,
+		enumerable: false
+	});
+	Object.defineProperty(this,'id', {
+		value: tabId,
+		writable: false,
+		configurable: true,
+		enumerable: true
+	});
 
-	function setOpenTime(){
-		openTime = d.getTime();
-	}
-
-	function setClosedTime(){
-		closedTime = d.getTime();
-	}
-
-	function sendTab(){
-
-	}
-
-	let API = {
-		setOpenTime : setOpenTime,
-		setClosedTime : setClosedTime,
-		sendTab : sendTab
+	this.setclosedTime = function(){
+		this.closedTime = this.d.getTime();
 	};
 
-	return API;
+	this.send = function() {
+		let response = {
+			status: 'error'
+		};
+
+		return response;
+	};
+
 }
 
 function newDomainList(){
@@ -51,6 +53,7 @@ function newDomainList(){
 	return API;
 }
 
+
 /* 
 Create the extension unique key and stores it
 */
@@ -61,11 +64,29 @@ function createUniqueKey(){
 		});
 }
 
+
+// Store all the tabs currently opened
+let tabArray = [];
+
 /*
 Create an instance of the TabLife object
 */
-function storeTab(){
-	
+function storeTab(tab){
+	let tabId = tab.id;
+	tabArray.push(new tabLife(tabId));
+	console.log(tabId);
+}
+
+function endTabLife(tabId) {
+	console.log(tabId);
+	console.log(tabArray);
+	let tab = tabArray.find(item => item.id == tabId);
+	tab.setclosedTime();
+	let response = tab.send();
+
+	if(response.status == 'error'){
+		console.log('the closed tab was not succesfully sent to mortrevere');
+	}
 }
 
 
@@ -76,4 +97,5 @@ if(uniqueKey === 0){
 }
 
 chrome.tabs.onCreated.addListener(storeTab);
+chrome.tabs.onRemoved.addListener(endTabLife);
 

@@ -20,6 +20,7 @@ function renderStatus(statusText) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+
   getNumberOfTabs(function (numberOFTabs) {
     var message = "You have " + numberOFTabs + " tabs opened in your current window.";
 
