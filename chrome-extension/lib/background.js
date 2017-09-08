@@ -2,7 +2,7 @@
 
 /* 
 Get the unique extension key,
-if it doesnt exist, return 0
+if it doesn't exist, return 0
 */
 
 function getUniqueKey() {
@@ -23,22 +23,23 @@ function Domain(domain) {
 
 	this.defineProperty(this, "openTime", {
 		get: function get() {
-			return openTime;
+			return _this.openTime;
 		},
 		enumerable: false,
 		configurable: false });
 
-	this.defineProperty(this, "closedTime", { set: function set(newVal) {
+	this.defineProperty(this, "closedTime", {
+		set: function set(newVal) {
 			return _this._closedTime_ = newVal;
 		},
 		get: function get() {
-			return closedTime;
+			return _this._closedTime_;
 		},
 		enumerable: false,
 		configurable: false });
 }
 
-function tabLife(tabId) {
+function TabLife(tabId) {
 	var _this2 = this;
 
 	this.domainsVisited = [];
@@ -54,15 +55,15 @@ function tabLife(tabId) {
 
 	Object.defineProperty(this, "id", {
 		get: function get() {
-			return _this2._id;
+			return _this2._id_;
 		},
 		set: function set(newVal) {
-			_this2._id = newVal;
+			_this2._id_ = newVal;
 		}
 	});
 	this.id = tabId;
 
-	// create a unique tab id and move all of this in a function
+	// TODO : create a unique tab id and move all of this in a function
 	this.refId = 1;
 	Object.defineProperty(this, 'refId', {
 		writable: false,
@@ -71,11 +72,9 @@ function tabLife(tabId) {
 	});
 
 	this.send = function () {
-		var response = {
+		return {
 			status: 'error'
 		};
-
-		return response;
 	};
 
 	this.change = function () {
@@ -109,23 +108,23 @@ Create an instance of the TabLife object
 function storeTab(tab) {
 	var tabId = tab.id;
 	console.log(tabId);
-	tabArray.push(new tabLife(tabId));
+	tabArray.push(new TabLife(tabId));
 	console.log(tabArray);
 }
 
 function endTabLife(tabId) {
 	var tab = tabArray.find(function (item) {
-		return item.id == tabId;
+		return item.id === tabId;
 	});
 	var tabIndex = tabArray.findIndex(function (item) {
-		return item.id == tabId;
+		return item.id === tabId;
 	});
 	tab.closedTime = d.getTime();
 	var response = tab.send();
 
-	if (response.status == 'error') {
-		console.log('the closed tab was not succesfully sent to mortrevere');
-	} else if (response.status == 'sucess') {
+	if (response.status === 'error') {
+		console.log('the closed tab was not successfully sent to mortrevere');
+	} else if (response.status === 'success') {
 		console.log('what do you know ? It worked !!');
 	}
 
@@ -135,14 +134,14 @@ function endTabLife(tabId) {
 }
 
 /* This event is fired when a tab is updated
-/  For instance when a preloaded tab replace an existant tab
+/  For instance when a preloaded tab replace an existent tab
 /  This way we can keep the proper reference for this tab
 */
 function updateTabId(tabDetails) {
 	console.log('updating tab');
 	console.log(tabDetails);
 	var tab = tabArray.find(function (item) {
-		return item.id == tabDetails.replacedTabId;
+		return item.id === tabDetails.replacedTabId;
 	});
 	if (tab !== undefined) {
 		tab.id = tabDetails.tabId;
@@ -154,7 +153,7 @@ function updateTabId(tabDetails) {
 var uniqueKey = getUniqueKey();
 
 if (uniqueKey === 0) {
-	uniqueKey = createUniqueKey();
+	uniqueKey = getAUniqueKey();
 }
 
 chrome.tabs.onCreated.addListener(storeTab);
